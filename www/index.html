@@ -52,7 +52,6 @@
             // Cordova is ready
             function onDeviceReady() {    
             var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
-            crearDb();
             }
             //La funcion CambiarDia() cambia el día del horario para que siempre se muestre el día actual.
             function cambiarDia(){
@@ -69,7 +68,6 @@
                 }
             function crearDb2(tx){
                 tx.executeSql("CREATE TABLE IF NOT EXISTS Horario(id INTEGER PRIMARY KEY ASC,nombreMat VARCHAR(100) NOT NULL,dia VARCHAR(100) NOT NULL, priMod TINYINT(1),segMod TINYINT(1),terMod TINYINT(1),cuarMod TINYINT(1),quinMod TINYINT(1),sexMod TINYINT(1),sepMod TINYINT(1),octMod TINYINT(1),novMod TINYINT(1),decMod TINYINT(1),onceMod TINYINT(1));");
-                alert('creadaaa');
             }
             //funcion para borrar la base de datos
             function borrarDb(){
@@ -204,11 +202,7 @@
             }
         </script>
     </head>
-    <body onload="borrarTabla();cambiarDia();crearTabla()">
-    <!--<nav>
-        <div class="nav-wrapper">
-          <a href="#" class="brand-logo">Logo</a>
-        </div> -->
+    <body onload="crearDb();borrarTabla();cambiarDia();crearTabla()">
     </nav>
     <div class="col s12">
       <ul class="tabs">
