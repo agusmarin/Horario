@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <!--<link rel="stylesheet" type="text/css" href="css/index.css" /> -->
+             <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <!--Importamos materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <!--Iconos-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <script type="text/javascript">
+            //funciones del template
+            $(document).ready(function(){
+                $('ul.tabs').tabs();
+                var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            });
+            $(".button-collapse").sideNav();
+            //-----------funciones del template-----------
+            var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            
+            // Cordova is ready
+            function onDeviceReady() {    
+            var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            crearDb();
+            }
+            //La funcion CambiarDia() cambia el día del horario para que siempre se muestre el día actual.
+            function cambiarDia(){
+                var fecha = new Date();
+                var fecha2 = fecha.getDay();
+                if (fecha2 == 0){
+                    document.getElementById('selectDia').options[1].selected = 'selected';}
+                else{
+                    document.getElementById('selectDia').options[fecha2].selected = 'selected';}
+            }
+            //funcion para crear la base de datos
+            function crearDb(){
+                db.transaction(crearDb2,errorCB);
+                }
+            function crearDb2(tx){
+                tx.executeSql("CREATE TABLE IF NOT EXISTS Horario(id INTEGER PRIMARY KEY ASC,nombreMat VARCHAR(100) NOT NULL,dia VARCHAR(100) NOT NULL, priMod TINYINT(1),segMod TINYINT(1),terMod TINYINT(1),cuarMod TINYINT(1),quinMod TINYINT(1),sexMod TINYINT(1),sepMod TINYINT(1),octMod TINYINT(1),novMod TINYINT(1),decMod TINYINT(1),onceMod TINYINT(1));");
+                alert('creadaaa');
+            }
+            //funcion para borrar la base de datos
+            function borrarDb(){
+                db.transaction(PopulateDB, errorCB);
+            }
+            function PopulateDB(tx) {
+                tx.executeSql("DROP TABLE IF EXISTS Materia;");
+                tx.executeSql("DROP TABLE IF EXISTS Horario;");
+                //tx.executeSql("CREATE TABLE IF NOT EXISTS Materia(id INTEGER PRIMARY KEY ASC,nombre TEXT NOT NULL);");
+                tx.executeSql("CREATE TABLE IF NOT EXISTS Horario(id INTEGER PRIMARY KEY ASC,nombreMat VARCHAR(100) NOT NULL,dia VARCHAR(100) NOT NULL, priMod TINYINT(1),segMod TINYINT(1),terMod TINYINT(1),cuarMod TINYINT(1),quinMod TINYINT(1),sexMod TINYINT(1),sepMod TINYINT(1),octMod TINYINT(1),novMod TINYINT(1),decMod TINYINT(1),onceMod TINYINT(1));");
+                Materialize.toast('Base de datos borrada', 4000);
+            }
+
+            //funcion ejecutada al haber errores
+            function errorCB(err) {
+                alert("Error processing SQL: "+err.message);
+            }
+            //funcion para guardar materias
+            function guardarMateria(){
+                db.transaction(guardarHorario2,errorCB);
+                }
+            function guardarHorario2(tx){
+                tx.executeSql("Insert into Horario(nombreMat,dia,priMod,segMod,terMod,cuarMod,quinMod,sexMod,sepMod,octMod,novMod,decMod,onceMod)                               values('"
+                              +$( "#nombreMateria" ).val()+
+                              "','"+$( "#diaHorario" ).val()+
+                              "','"+ +$( "#priMod" ).is( ':checked')  +
+                              "','"+ +$( "#segMod" ).is( ':checked')  +
+                              "','"+ +$( "#terMod" ).is( ':checked')  +
+                              "','"+ +$( "#cuarMod" ).is( ':checked') +
+                              "','"+ +$( "#quinMod" ).is( ':checked') +
+                              "','"+ +$( "#sexMod" ).is( ':checked')  +
+                              "','"+ +$( "#sepMod" ).is( ':checked')  +
+                              "','"+ +$( "#octMod" ).is( ':checked')  +
+                              "','"+ +$( "#novMod" ).is( ':checked')  +
+                              "','"+ +$( "#decMod" ).is( ':checked')  +
+                              "','"+ +$( "#onceMod" ).is( ':checked') +
+                              "');");
+                Materialize.toast('¡Materia guardada!', 4000);
+                }
+
+            function mostrarMateria(){
+                db.transaction(function(tx){
+                    tx.executeSql("Select * from Horario",[],mostrarMateria2,errorCB);
+                    },errorCB);
+                }
+            function mostrarMateria2(tx,results){
+                var text = "";
+                for(i=0;i < results.rows.length ; i++){
+                    var horario = results.rows.item(i);
+                    var resultado = horario.nombreMat +horario.dia + horario.priMod;
+                    text = text + resultado;
+                }
+                $('input[id=mostrado2]').val(text);
+            }
+            //función que crea la tabla donde se muestran el horario
+            function crearTabla(){
+                db.transaction(crearTabla2,errorCB);
+                }
+            function crearTabla2(tx){
+                var tabla =  $( "#selectDia" ).val();
+                tx.executeSql("Select * from Horario where dia='"+tabla+"'",[],crearTabla3,errorCB);
+                }
+            function crearTabla3(tx,results){
+                if(results.rows.length == 0){
+                    var modulos =['primerMod','segundoMod','tercerMod','cuartoMod','quintoMod','sextoMod','septimoMod','octavoMod','novenoMod','decimoMod','onceavoMod'];
+                    Materialize.toast('No hay materias registradas en este día', 4000);
+                    for (j=0; j<=10;j++){
+                        modulo = modulos[j];
+                        $('#'+modulo).html("<span id="+modulo+">-</span>");
+                    }
+                }else{
+                    for(i=0; i<results.rows.length ; i++){
+                        if(results.rows.item(i).priMod == 1){
+                            $('#primerMod').html("<span id='primerMod'>"+results.rows.item(i).nombreMat+"</span>");
+                        }
+
+                        if(results.rows.item(i).segMod == 1){
+                            $('#segundoMod').html("<span id='segundoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).terMod == 1){
+                            $('#tercerMod').html("<span id='tercerMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).cuarMod == 1){
+                            $('#cuartoMod').html("<span id='cuartoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).quinMod == 1){
+                            $('#quintoMod').html("<span id='quintoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).sexMod == 1){
+                            $('#sextoMod').html("<span id='sextoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).sepMod == 1){
+                            $('#septimoMod').html("<span id='septimoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).octMod == 1){
+                            $('#octavoMod').html("<span id='octavoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).novMod == 1){
+                            $('#novenoMod').html("<span id='novenoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).decMod == 1){
+                            $('#decimoMod').html("<span id='decimoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+
+                        if(results.rows.item(i).onceMod == 1){
+                            $('#onceavoMod').html("<span id='onceavoMod'>"+results.rows.item(i).nombreMat+"</span>");
+                            }
+                        }
+                    }
+                }
+            //Esta función vacia la tabla del horario
+            function borrarTabla(){
+                $('#primerMod').html("<span id='primerMod'>-</span>");
+                $('#segundoMod').html("<span id='segundoMod'>-</span>");
+                $('#tercerMod').html("<span id='tercerMod'>-</span>");
+                $('#cuartoMod').html("<span id='cuartoMod'>-</span>");
+                $('#quintoMod').html("<span id='quintoMod'>-</span>");
+                $('#sextoMod').html("<span id='sextoMod'>-</span>");
+                $('#septimoMod').html("<span id='septimoMod'>-</span>");
+                $('#octavoMod').html("<span id='octavoMod'>-</span>");
+                $('#novenoMod').html("<span id='novenoMod'>-</span>");
+                $('#decimoMod').html("<span id='decimoMod'>-</span>");
+                $('#onceavoMod').html("<span id='onceavoMod'>-</span>");
+            }
+        </script>
+    </head>
+    <body onload="borrarTabla();cambiarDia();crearTabla()">
+    <!--<nav>
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo">Logo</a>
+        </div> -->
+    </nav>
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s6"><a class="active" href="#horario" onclick="cambiarDia();crearTabla();"><i class="material-icons">schedule</i></a></li>
+        <li class="tab col s6"><a href="#configuracion"><i class="material-icons">settings</i></a></li>
+      </ul>
+    </div>
+    <div class="row">
+        <div id="horario" class="container s12">
+                <div class="input-field col s12">
+                    <div class="row">
+                    <select class="browser-default col s6" id="selectDia" required onclick="borrarTabla()">
+                        <option value="-" disabled selected>Seleccione un dia</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miercoles">Miercoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sabado">Sabado</option>
+                    </select>
+                     <a class="waves-effect waves-light btn col offset-s1 s5" onclick="crearTabla()" >Ver Horario</a>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <table >
+                                <thead>
+                                  <tr>
+                                      <th data-field="id">Modulo N°</th>
+                                      <th data-field="name">Materia</th>
+                                      <th data-field="name">Horario</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                               <tr>
+                                 <th>1</th>
+                                   <td><span id="primerMod"></span></td>
+                                 <td>7:45 - 8:25</td>
+                               </tr>
+                               <tr>
+                                 <th>2</th>
+                                 <td ><span id="segundoMod"></span></td>
+                                 <td>8:25 - 9:05</td>
+                               </tr>
+                                <tr>
+                                 <th>3</th>
+                                 <td ><span id="tercerMod"></span></td>
+                                 <td>9:25 - 10:05</td>
+                               </tr>
+                                 <tr>
+                                 <th>4</th>
+                                 <td ><span id="cuartoMod"></span></td>
+                                 <td>10:05 - 10:45</td>
+                               </tr>
+                                 <tr>
+                                 <th>5</th>
+                                 <td ><span id="quintoMod"></span></td>
+                               <td>10:50 - 11:30</td>
+                                 <td></td>
+                               </tr>
+                                 <tr>
+                                 <th>6</th>
+                                 <td ><span id="sextoMod"></span></td>
+                                 <td>11:30 - 12:15</td>
+                               </tr>
+                                 <tr>
+                                 <th>7</th>
+                                 <td ><span id="septimoMod"></span></td>
+                                 <td>12:55 - 13:35</td>
+                               </tr>
+                                 <tr>
+                                 <th>8</th>
+                                 <td ><span id="octavoMod"></span></td>
+                                <td>13:35 - 14:05</td>
+                               </tr>
+                                 <tr>
+                                 <th>9</th>
+                                 <td ><span id="novenoMod"></span></td>
+                                 <td>14:05 - 14:45</td>
+                               </tr>
+                                 <tr>
+                                 <th>10</th>
+                                 <td ><span id="decimoMod"></span></td>
+                                 <td>14:50 - 15:30</td>
+                               </tr>
+                                 <tr>
+                                 <th>11</th>
+                                 <td ><span id="onceavoMod"></span></td>
+                                 <td>15:30 - 16:05</td>
+                               </tr>
+                             </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>   
+        </div>
+    </div>
+    <div class="row">
+            <div id="configuracion" class="container s12">
+                <div class="row">
+                                <a class="waves-effect waves-light btn col s12" href="agregarMateria.html"><i class="material-icons left">library_add</i>Agregar Materia</a>
+                </div>
+                <div class="row">
+                    <a class="waves-effect waves-light btn col s12" onclick="borrarDb()"><i class="material-icons left">delete</i>Borrar base de datos</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

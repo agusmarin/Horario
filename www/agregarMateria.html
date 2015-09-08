@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <!--<link rel="stylesheet" type="text/css" href="css/index.css" /> -->
+             <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <!--Icons-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+               <script type="text/javascript">
+            app.initialize();
+            $(document).ready(function(){
+                $('ul.tabs').tabs();
+                var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            });
+            $(".button-collapse").sideNav();
+            
+            var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            
+            // Cordova is ready
+            //
+            function onDeviceReady() {    
+            var db = openDatabase('MyDB', '1.0', 'My Sample DB', 100 * 1024);
+            crearDb();
+            }
+            
+            function crearDb(){
+                db.transaction(crearDb2,errorCB)}
+            function crearDb2(tx){
+                tx.executeSql("CREATE TABLE IF NOT EXISTS Horario(id INTEGER PRIMARY KEY ASC,nombreMat VARCHAR(100) NOT NULL,dia VARCHAR(100) NOT NULL, priMod TINYINT(1),segMod TINYINT(1),terMod TINYINT(1),cuarMod TINYINT(1),quinMod TINYINT(1),sexMod TINYINT(1),sepMod TINYINT(1),octMod TINYINT(1),novMod TINYINT(1),decMod TINYINT(1),onceMod TINYINT(1));");
+            }
+            function borrarDb(){
+                db.transaction(PopulateDB, errorCB);
+            }
+
+            // Populate the database 
+            function PopulateDB(tx) {
+                tx.executeSql("DROP TABLE IF EXISTS Materia;");
+                tx.executeSql("DROP TABLE IF EXISTS Horario;");
+                //tx.executeSql("CREATE TABLE IF NOT EXISTS Materia(id INTEGER PRIMARY KEY ASC,nombre TEXT NOT NULL);");
+                tx.executeSql("CREATE TABLE IF NOT EXISTS Horario(id INTEGER PRIMARY KEY ASC,nombreMat VARCHAR(100) NOT NULL,dia VARCHAR(100) NOT NULL, priMod TINYINT(1),segMod TINYINT(1),terMod TINYINT(1),cuarMod TINYINT(1),quinMod TINYINT(1),sexMod TINYINT(1),sepMod TINYINT(1),octMod TINYINT(1),novMod TINYINT(1),decMod TINYINT(1),onceMod TINYINT(1));");
+            
+                 //tx.executeSql("Select * from Materia",[],ejecutar,errorCB); 
+                alert("PopulateDB-Se borro");
+            }
+
+            // Transaction error callback
+            //
+            function errorCB(err) {
+                alert("Error processing SQL: "+err.message);
+            }
+
+            // Transaction success callback
+            //
+            function successCB() {
+                alert("success!");
+            }
+            
+            function formClick(){
+                db.transaction(guardarTexto,errorCB);
+                //document.getElementById('mostrado').value = 'resultado';
+                //$('input[id=mostrado]').val(resultado);
+            }
+            function guardarTexto(tx,result){
+                var resultado = document.getElementById('texto').value;
+                
+                tx.executeSql("Insert into Materia(nombre) values('"+resultado+"')");
+                }
+            
+            function mostrarOnClick(){
+                db.transaction(mostrarTexto,errorCB);
+            }
+            
+            function mostrarTexto(tx){
+                tx.executeSql("Select * from Materia",[],ejecutar,errorCB);  
+            }
+            
+            function ejecutar(tx,results){
+                //for(var i=0; i<result.rows.length; i++) {
+                //    $('input[id=mostrado]').append("<li> <a id='"+results.rows.item(i).id + "'>" + results.rows.item(i).nombre + "</a></li>");
+                //}
+                var answer1 = "Rows: " + results.rows.length;
+                if (results.rows.length>0){
+                    var answer2 = results.rows.item(0);
+                var answer = answer1+answer2.nombre+JSON.stringify(answer2);
+                $('input[id=mostrado]').val(answer);
+                }else{
+                 alert('no hay nada');   
+                }
+                
+            }
+            
+            function guardarMateria(){
+                db.transaction(guardarHorario2,errorCB);
+                }
+            function guardarHorario2(tx){
+                /*/$("input:checkbox:checked").each(function(){
+	               modulos.push(this.value);
+                    });/*/
+                //tx.executeSql("Insert into Materia(nombre) values('"+$('input[id=nombreMateria]')+"');");
+                tx.executeSql("Insert into Horario(nombreMat,dia,priMod,segMod,terMod,cuarMod,quinMod,sexMod,sepMod,octMod,novMod,decMod,onceMod)                               values('"
+                              +$( "#nombreMateria" ).val()+
+                              "','"+$( "#diaHorario" ).val()+
+                              "','"+ +$( "#priMod" ).is( ':checked')  +
+                              "','"+ +$( "#segMod" ).is( ':checked')  +
+                              "','"+ +$( "#terMod" ).is( ':checked')  +
+                              "','"+ +$( "#cuarMod" ).is( ':checked') +
+                              "','"+ +$( "#quinMod" ).is( ':checked') +
+                              "','"+ +$( "#sexMod" ).is( ':checked')  +
+                              "','"+ +$( "#sepMod" ).is( ':checked')  +
+                              "','"+ +$( "#octMod" ).is( ':checked')  +
+                              "','"+ +$( "#novMod" ).is( ':checked')  +
+                              "','"+ +$( "#decMod" ).is( ':checked')  +
+                              "','"+ +$( "#onceMod" ).is( ':checked') +
+                              "');");
+                Materialize.toast('¡Materia guardada!', 4000);
+                }
+
+            function mostrarMateria(){
+                db.transaction(function(tx){
+                    tx.executeSql("Select * from Horario",[],mostrarMateria2,errorCB);
+                    },errorCB);
+                }
+            function mostrarMateria2(tx,results){
+                var text = "";
+                for(i=0;i < results.rows.length ; i++){
+                    var horario = results.rows.item(i);
+                    var resultado = horario.nombreMat +horario.dia + horario.priMod;
+                    text = text + resultado;
+                }
+                $('input[id=mostrado2]').val(text);
+            }
+            
+            function crearTabla(){
+                db.transaction(crearTabla2,errorCB);
+                }
+            function crearTabla2(tx){
+                var tabla =  $( "#selectDia" ).val();
+                tx.executeSql("Select * from Horario where dia='"+tabla+"'",[],crearTabla3,errorCB);
+                }
+            function crearTabla3(tx,results){
+                for(i=0; i<results.rows.length ; i++){
+                    if(results.rows.item(i).priMod == 1){
+                        $('#primerMod').html("<span id='primerMod'>"+results.rows.item(i).nombreMat+"</span>");
+                    }
+                    if(results.rows.item(i).segMod == 1){
+                        $('#segundoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).terMod == 1){
+                        $('#tercerMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).cuarMod == 1){
+                        $('#cuartoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).quinMod == 1){
+                        $('#quintoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).sexMod == 1){
+                        $('#sextoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).sepMod == 1){
+                        $('#septimoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).octMod == 1){
+                        $('#octavoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).novMod == 1){
+                        $('#novenoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).decMod == 1){
+                        $('#decimoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    if(results.rows.item(i).onceMod == 1){
+                        $('#onceavoMod').html(results.rows.item(i).nombreMat);
+                        }
+                    
+                }
+            }
+            function borrarTabla(){
+                
+            }
+        </script>
+    </head>
+    <body>
+        <nav>
+            <div class="nav-wrapper">
+              <a href="#" class="brand-logo"><i class="material-icons">library_add</i></a>
+              <ul id="nav-mobile" >
+                <li><a href="index.html">Volver</a></li>
+              </ul>
+            <ul id="nav-mobile" class="right " >
+                <li><a onclick="guardarMateria();"><i class="material-icons">done</i></a></li>
+              </ul>
+            </div>
+        </nav>
+        <div class="container s12">
+        <div class="row">
+            <div class="input-field col s6">
+            <input id="nombreMateria" type="text" class="validate">
+            <label for="nombreMateria">Materia</label>
+            </div>
+            <div class="input-field col s6">
+            <select class="browser-default" id="diaHorario" required>
+                <option value="-" disabled selected>Seleccione un dia</option>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miercoles">Miercoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sabado">Sabado</option>
+            </select>
+            </div>
+          </div>
+            <div class="row">
+            <form class="col s12">
+        <p>
+                <p class=".right-align">Primer módulo</p>            
+          <input type="checkbox" id="priMod" />
+          <label for="priMod">1°</label>
+          <input type="checkbox" id="segMod" />
+          <label for="segMod">2°</label>
+
+        </p>                                        
+        <p>
+                        <p class=".right-align">Segundo módulo</p>
+          <input type="checkbox" id="terMod" />
+          <label for="terMod">3°</label>
+          <input type="checkbox" id="cuarMod" />
+          <label for="cuarMod">4°</label>
+
+        </p>
+        <p>
+                      <p class=".right-align">Tercer módulo</p>  
+          <input type="checkbox" id="quinMod" />
+          <label for="quinMod">5°</label>
+          <input type="checkbox" id="sexMod" />
+          <label for="sexMod">6°</label>
+
+        </p>
+        <p>
+        <p class=".right-align">Séptima hora</p>            
+          <input type="checkbox" id="sepMod" />
+          <label for="sepMod">7°</label>
+
+        </p>
+        <p>
+        <p class=".right-align">Cuarto módulo</p>            
+          <input type="checkbox" id="octMod" />
+          <label for="octMod">8°</label>
+          <input type="checkbox" id="novMod" />
+          <label for="novMod">9°</label>
+
+        </p>
+        <p>
+        <p class=".right-align">Quinto módulo</p>            
+          <input type="checkbox" id="decMod" />
+          <label for="decMod">10°</label>
+          <input type="checkbox" id="onceMod" />
+          <label for="onceMod">11°</label>
+
+        </p>
+<input type="text" id="mostrado2" />
+<a class="waves-effect waves-light btn col offset-s1 s5" onclick="mostrarMateria()" >Ver Horario</a>
+                </form>
+                </div>
+        </div>                              
+    </body>
+</html>
