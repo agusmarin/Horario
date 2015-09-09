@@ -107,21 +107,6 @@
                               "');");
                 Materialize.toast('¡Materia guardada!', 4000);
                 }
-
-            function mostrarMateria(){
-                db.transaction(function(tx){
-                    tx.executeSql("Select * from Horario",[],mostrarMateria2,errorCB);
-                    },errorCB);
-                }
-            function mostrarMateria2(tx,results){
-                var text = "";
-                for(i=0;i < results.rows.length ; i++){
-                    var horario = results.rows.item(i);
-                    var resultado = horario.nombreMat +horario.dia + horario.priMod;
-                    text = text + resultado;
-                }
-                $('input[id=mostrado2]').val(text);
-            }
             //función que crea la tabla donde se muestran el horario
             function crearTabla(){
                 db.transaction(crearTabla2,errorCB);
@@ -199,7 +184,17 @@
                 $('#novenoMod').html("<span id='novenoMod'>-</span>");
                 $('#decimoMod').html("<span id='decimoMod'>-</span>");
                 $('#onceavoMod').html("<span id='onceavoMod'>-</span>");
-            }
+                }
+            //Esta función confirma que se quiere borrar la base de datos
+            function preguntar(){ 
+                confirmar=confirm("Seguro quieres borrar la base de datos?"); 
+                if (confirmar){
+                //Aquí pones lo que quieras si da a Aceptar
+                borrarDb();
+                }
+                else{
+                }
+            } 
         </script>
     </head>
     <body onload="crearDb();borrarTabla();cambiarDia();crearTabla()">
@@ -306,7 +301,7 @@
                                 <a class="waves-effect waves-light btn col s12" href="agregarMateria.html"><i class="material-icons left">library_add</i>Agregar Materia</a>
                 </div>
                 <div class="row">
-                    <a class="waves-effect waves-light btn col s12" onclick="borrarDb()"><i class="material-icons left">delete</i>Borrar base de datos</a>
+                    <a class="waves-effect waves-light btn col s12" onclick="javascript:preguntar();"><i class="material-icons left">delete</i>Borrar base de datos</a>
                 </div>
             </div>
         </div>
